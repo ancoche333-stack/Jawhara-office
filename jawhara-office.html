@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مكتب الجوهرة للطباعة والاستنساخ</title>
+<style>
+:root{--bg:#f1f5f9;--card:#fff;--ink:#0f172a;--muted:#64748b;--pri:#0f766e;--pri2:#115e59;--soft:#ccfbf1;--acc:#f59e0b;--red:#dc2626;--green:#16a34a;--line:#e2e8f0;--r:14px}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic","Arial",sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.5}
+header{background:linear-gradient(135deg,var(--pri2),var(--pri));color:#fff;padding:14px 22px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:12px;background:#fff;color:var(--pri);display:grid;place-items:center;font-size:26px}
+.brand h1{margin:0;font-size:20px}
+.brand small{opacity:.85}
+.hright{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.clock{font-size:14px;opacity:.95;text-align:left}
+header input[type=date]{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);width:auto}
+nav{display:flex;gap:6px;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;overflow-x:auto}
+nav button{border:0;background:transparent;padding:10px 18px;border-radius:10px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--soft);color:var(--pri2)}
+main{max-width:1280px;margin:0 auto;padding:18px}
+.tab{display:none}.tab.on{display:block}
+.grid2{display:grid;grid-template-columns:minmax(320px,430px) 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:var(--r);padding:18px;box-shadow:0 1px 3px rgba(15,23,42,.08);margin-bottom:18px}
+.card h2{margin:0 0 12px;font-size:18px}
+.card h3{margin:18px 0 8px;font-size:16px}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px;font-weight:600}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,select:focus{outline:2px solid var(--pri);border-color:var(--pri)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.row4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:560px){.row3,.row4{grid-template-columns:1fr 1fr}}
+.btn{border:0;background:var(--pri);color:#fff;padding:11px 18px;border-radius:10px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--pri2)}
+.btn.big{width:100%;margin-top:14px;padding:14px;font-size:17px}
+.btn.alt{background:#e2e8f0;color:var(--ink)}.btn.alt:hover{background:#cbd5e1}
+.btn.warn{background:var(--acc);color:#1f2937}.btn.warn:hover{background:#d97706;color:#fff}
+.btn.red{background:var(--red)}.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.chip{border:1px solid var(--line);background:#f8fafc;padding:8px 12px;border-radius:999px;cursor:pointer;font:inherit;font-size:14px}
+.chip.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:12px 0}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px;background:#f8fafc}
+.kpi span{display:block;font-size:13px;color:var(--muted)}
+.kpi b{font-size:22px}
+.kpi.g b{color:var(--green)}.kpi.r b{color:var(--red)}.kpi.p b{color:var(--pri2)}.kpi.o b{color:#b45309}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th{background:#f1f5f9;text-align:right;padding:9px;border-bottom:2px solid var(--line);white-space:nowrap}
+table.t td{padding:9px;border-bottom:1px solid var(--line)}
+table.t tfoot td{font-weight:700;background:#f8fafc}
+.scroll{overflow-x:auto}
+.bar{height:8px;background:#e2e8f0;border-radius:6px;min-width:80px}
+.bar i{display:block;height:100%;background:var(--pri);border-radius:6px}
+.tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:12px;font-weight:700}
+.tag.d{background:#fee2e2;color:#991b1b}.tag.ok{background:#dcfce7;color:#166534}
+.bar-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.bar-tools>div{min-width:130px}
+.empty{text-align:center;color:var(--muted);padding:26px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:11px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:60}
+.toast.show{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-start;justify-content:center;padding:20px;overflow:auto;z-index:50}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:16px;width:100%;max-width:880px;padding:20px}
+.rhead{text-align:center;border-bottom:2px solid var(--pri);padding-bottom:8px;margin-bottom:6px}
+.rhead h1{margin:0;font-size:22px;color:var(--pri2)}
+.rhead h2{margin:6px 0 0;font-size:18px}
+.sub{color:var(--muted);font-size:14px}
+.diff{padding:10px 14px;border-radius:10px;font-weight:700;margin-top:10px}
+.diff.ok{background:#dcfce7;color:#166534}.diff.bad{background:#fee2e2;color:#991b1b}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+#printArea{display:none}
+@media print{
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block;padding:8mm;font-size:13px}
+  body{background:#fff}
+  .bar{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">🖨️</div>
+    <div><h1>مكتب الجوهرة للطباعة والاستنساخ</h1><small>الأستاذ ولاء سلمان</small></div>
+  </div>
+  <div class="hright">
+    <div><label style="color:#fff;margin:0 0 3px">تاريخ العمل</label><input type="date" id="workDate" onchange="refreshAll()"></div>
+    <div class="clock" id="clock"></div>
+  </div>
+</header>
+
+<nav>
+  <button class="on" data-tab="orders" onclick="showTab('orders')">🧾 تسجيل الطلبات</button>
+  <button data-tab="reports" onclick="showTab('reports')">📊 التقارير وإغلاق الصندوق</button>
+  <button data-tab="expenses" onclick="showTab('expenses')">💸 المصروفات</button>
+  <button data-tab="settings" onclick="showTab('settings')">⚙️ الخدمات والأسعار</button>
+</nav>
+
+<main>
+<!-- ============ الطلبات ============ -->
+<section id="tab-orders" class="tab on">
+  <div class="grid2">
+    <div class="card">
+      <h2>➕ تسجيل عملية جديدة</h2>
+      <label>اختر الخدمة</label>
+      <div id="chips" class="chips"></div>
+      <select id="svc" onchange="onSvc()"></select>
+      <div class="row3">
+        <div><label id="qtyLbl">الكمية</label><input type="number" id="qty" min="1" value="1" oninput="calc('qty')"></div>
+        <div><label>سعر الوحدة</label><input type="number" id="price" min="0" oninput="calc('price')"></div>
+        <div><label>السعر الكلي</label><input type="number" id="total" min="0" oninput="calc('total')"></div>
+      </div>
+      <div class="row3">
+        <div><label>المبلغ المستلم</label><input type="number" id="paid" min="0" oninput="calc('paid')"></div>
+        <div><label>المتبقي (دين)</label><input id="remain" readonly value="0"></div>
+        <div><label>اسم الزبون (اختياري)</label><input id="cust"></div>
+      </div>
+      <label>ملاحظة (اختياري)</label>
+      <input id="note" placeholder="مثال: بحث تخرج – 40 صفحة">
+      <button class="btn big" onclick="addOrder()">إضافة إلى سجل اليوم</button>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>ملخص اليوم <span class="sub" id="dayLabel"></span></h2>
+        <div class="kpis" id="dayKpis"></div>
+      </div>
+      <div class="card">
+        <h2>سجل عمليات اليوم</h2>
+        <div class="scroll" id="ordersList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ التقارير ============ -->
+<section id="tab-reports" class="tab">
+  <div class="card">
+    <div class="bar-tools">
+      <div><label>الفترة</label>
+        <select id="period" onchange="renderReports()">
+          <option value="day">يومي</option>
+          <option value="week">أسبوعي (سبت – جمعة)</option>
+          <option value="month">شهري</option>
+          <option value="custom">من – إلى</option>
+        </select></div>
+      <div id="refBox"><label>التاريخ المرجعي</label><input type="date" id="refDate" onchange="renderReports()"></div>
+      <div id="customBox" style="display:none;gap:10px"><div><label>من</label><input type="date" id="fromDate" onchange="renderReports()"></div><div><label>إلى</label><input type="date" id="toDate" onchange="renderReports()"></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn warn" onclick="openClose()">🔒 إغلاق الصندوق (اليوم)</button>
+        <button class="btn alt" onclick="printReport()">🖨️ طباعة</button>
+        <button class="btn alt" onclick="exportCSV()">⬇️ تصدير Excel (CSV)</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" id="reportBody"></div>
+  <div class="card">
+    <h2>سجل إغلاقات الصندوق</h2>
+    <div class="scroll" id="closingsList"></div>
+  </div>
+</section>
+
+<!-- ============ المصروفات ============ -->
+<section id="tab-expenses" class="tab">
+  <div class="grid2">
+    <div class="card">
+      <h2>💸 تسجيل مصروف</h2>
+      <label>البيان</label><input id="eDesc" placeholder="مثال: شراء رزمة ورق A4">
+      <div class="row2">
+        <div><label>التصنيف</label>
+          <select id="eCat"><option>ورق</option><option>أحبار وتونر</option><option>صيانة</option><option>ضيافة</option><option>أجور</option><option>كهرباء ومولدة</option><option>إيجار</option><option>أخرى</option></select></div>
+        <div><label>المبلغ</label><input type="number" id="eAmt" min="0"></div>
+      </div>
+      <button class="btn big" onclick="addExpense()">إضافة المصروف</button>
+      <p class="sub">يُسجَّل المصروف بتاريخ العمل المختار في الأعلى، ويُخصم من الربح الصافي.</p>
+    </div>
+    <div class="card">
+      <h2>مصروفات اليوم <span class="sub" id="eDayLabel"></span></h2>
+      <div class="scroll" id="expList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ الإعدادات ============ -->
+<section id="tab-settings" class="tab">
+  <div class="card">
+    <h2>الخدمات والأسعار</h2>
+    <p class="sub">عدّل الأسعار وتكلفة الوحدة الفعلية (على المكتب) — تُستخدم لحساب صافي الربح. التغيير يؤثر على العمليات الجديدة فقط.</p>
+    <div class="scroll"><table class="t"><thead><tr><th>اسم الخدمة</th><th>الوحدة</th><th>سعر البيع</th><th>تكلفة الوحدة</th><th></th></tr></thead><tbody id="svcTable"></tbody></table></div>
+    <h3>إضافة خدمة جديدة</h3>
+    <div class="row4">
+      <div><label>الاسم</label><input id="nName"></div>
+      <div><label>الوحدة</label><input id="nUnit" placeholder="نسخة / صفحة / ملف"></div>
+      <div><label>سعر البيع</label><input type="number" id="nPrice" min="0"></div>
+      <div><label>تكلفة الوحدة</label><input type="number" id="nCost" min="0" value="0"></div>
+    </div>
+    <button class="btn" style="margin-top:12px" onclick="addService()">إضافة الخدمة</button>
+  </div>
+  <div class="card">
+    <h2>النسخ الاحتياطي</h2>
+    <p class="sub">البيانات محفوظة داخل متصفح هذا الجهاز. خذ نسخة احتياطية بشكل دوري، ولا تمسح بيانات المتصفح قبل ذلك.</p>
+    <div class="actions">
+      <button class="btn" onclick="backup()">⬇️ تحميل نسخة احتياطية</button>
+      <label class="btn alt" style="margin:0;cursor:pointer;color:var(--ink)">⬆️ استرجاع نسخة<input type="file" accept=".json" style="display:none" onchange="restore(this)"></label>
+      <button class="btn red" onclick="wipe()">🗑️ حذف كل البيانات</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- نافذة إغلاق الصندوق -->
+<div class="modal" id="closeModal"><div class="mbox">
+  <div id="closeBody"></div>
+  <div class="card" style="box-shadow:none;border:1px solid var(--line);margin-top:14px">
+    <h2>🔒 جرد الصندوق</h2>
+    <div class="row3">
+      <div><label>رصيد بداية اليوم (الفكة)</label><input type="number" id="cOpen" value="0" min="0" oninput="calcClose()"></div>
+      <div><label>النقد الفعلي الموجود بالصندوق</label><input type="number" id="cCount" min="0" oninput="calcClose()"></div>
+      <div><label>المتوقع بالصندوق</label><input id="cExp" readonly></div>
+    </div>
+    <div id="cDiff"></div>
+    <div class="actions">
+      <button class="btn" onclick="confirmClose()">✔ تأكيد الإغلاق وحفظه</button>
+      <button class="btn alt" onclick="printClose()">🖨️ طباعة التقرير</button>
+      <button class="btn alt" onclick="closeModal()">إغلاق النافذة</button>
+    </div>
+  </div>
+</div></div>
+
+<div id="printArea"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ====================== البيانات ====================== */
+const KEY = 'jawhara_office_v1';
+const DEFAULT_SERVICES = [
+  {id:'s1',name:'استنساخ أبيض وأسود',unit:'نسخة',price:50,cost:15},
+  {id:'s2',name:'استنساخ ملون',unit:'نسخة',price:500,cost:200},
+  {id:'s3',name:'تنضيد',unit:'صفحة',price:1000,cost:0},
+  {id:'s4',name:'طباعة بحوث / مستندات',unit:'صفحة',price:250,cost:80},
+  {id:'s5',name:'سحب من الموبايل',unit:'ملف',price:500,cost:0},
+  {id:'s6',name:'تغليف (سبايرال)',unit:'قطعة',price:2000,cost:900},
+  {id:'s7',name:'كتابة بحوث',unit:'بحث',price:15000,cost:0},
+  {id:'s8',name:'خدمات أخرى',unit:'عملية',price:1000,cost:0}
+];
+let db = load();
+function load(){
+  try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.services) return d; }catch(e){}
+  return {services: JSON.parse(JSON.stringify(DEFAULT_SERVICES)), orders:[], expenses:[], closings:[]};
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('تعذّر الحفظ في المتصفح!'); } }
+
+/* ====================== أدوات ====================== */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+const dstr = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const today = () => dstr(new Date());
+const parseD = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
+const fmt = n => Math.round(n||0).toLocaleString('en-US');
+const money = n => fmt(n)+' د.ع';
+const sum = (a,k) => a.reduce((s,x)=>s+(+x[k]||0),0);
+const uid = () => 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const dayName = s => DAYS[parseD(s).getDay()]+' '+s;
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),2200); }
+function workDate(){ return $('workDate').value || today(); }
+
+function rangeFor(period, ref, from, to){
+  const d = parseD(ref);
+  if(period==='day') return [ref,ref];
+  if(period==='week'){
+    const off = (d.getDay()+1)%7;           // بداية الأسبوع السبت
+    const s = new Date(d); s.setDate(d.getDate()-off);
+    const e = new Date(s); e.setDate(s.getDate()+6);
+    return [dstr(s),dstr(e)];
+  }
+  if(period==='month') return [dstr(new Date(d.getFullYear(),d.getMonth(),1)), dstr(new Date(d.getFullYear(),d.getMonth()+1,0))];
+  let f = from||ref, t = to||ref; if(f>t){ const x=f; f=t; t=x; }
+  return [f,t];
+}
+function stats(from,to){
+  const os = db.orders.filter(o=>o.date>=from && o.date<=to);
+  const es = db.expenses.filter(e=>e.date>=from && e.date<=to);
+  const by = {};
+  os.forEach(o=>{
+    const b = by[o.name] || (by[o.name]={name:o.name,unit:o.unit,ops:0,qty:0,sales:0,paid:0,cost:0});
+    b.ops++; b.qty+=o.qty; b.sales+=o.total; b.paid+=o.paid; b.cost+=o.cost;
+  });
+  const sales=sum(os,'total'), paid=sum(os,'paid'), cost=sum(os,'cost'), exp=sum(es,'amount');
+  return {os,es,by:Object.values(by).sort((a,b)=>b.sales-a.sales),sales,paid,debt:sales-paid,cost,exp,gross:sales-cost,net:sales-cost-exp,cash:paid-exp};
+}
+
+/* ====================== التبويبات ====================== */
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.id==='tab-'+t));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  if(t==='reports') renderReports();
+}
+function refreshAll(){
+  renderServices(); renderOrders(); renderExpenses(); renderSettings();
+  if($('tab-reports').classList.contains('on')) renderReports();
+}
+
+/* ====================== تسجيل الطلبات ====================== */
+let totalManual=false, paidManual=false;
+function svcById(id){ return db.services.find(s=>s.id===id); }
+function renderServices(){
+  const cur = $('svc').value;
+  $('svc').innerHTML = db.services.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  if(cur && svcById(cur)) $('svc').value = cur;
+  $('chips').innerHTML = db.services.map(s=>`<button type="button" class="chip ${s.id===$('svc').value?'on':''}" onclick="pickSvc('${s.id}')">${esc(s.name)}</button>`).join('');
+  syncSvc(false);
+}
+function pickSvc(id){ $('svc').value=id; onSvc(); }
+function onSvc(){ totalManual=false; paidManual=false; syncSvc(true); renderServices_chipsOnly(); }
+function renderServices_chipsOnly(){
+  $('chips').querySelectorAll('.chip').forEach((c,i)=>c.classList.toggle('on',db.services[i] && db.services[i].id===$('svc').value));
+}
+function syncSvc(resetPrice){
+  const s = svcById($('svc').value) || db.services[0];
+  if(!s){ return; }
+  $('qtyLbl').textContent = 'العدد ('+s.unit+')';
+  if(resetPrice || $('price').value===''){ $('price').value = s.price; }
+  calc('price');
+}
+function calc(src){
+  const q=+$('qty').value||0, p=+$('price').value||0;
+  if(src==='qty'||src==='price'){ totalManual=false; $('total').value = q*p; }
+  if(src==='total'){ totalManual=true; }
+  if(src==='paid'){ paidManual=true; }
+  const t=+$('total').value||0;
+  if(!paidManual) $('paid').value = t;
+  $('remain').value = fmt(t-(+$('paid').value||0));
+}
+function addOrder(){
+  const s = svcById($('svc').value);
+  const qty=+$('qty').value, total=+$('total').value;
+  if(!s){ toast('أضف خدمة أولاً من تبويب الخدمات'); return; }
+  if(!(qty>0)){ toast('أدخل الكمية'); $('qty').focus(); return; }
+  if(!(total>0)){ toast('أدخل السعر الكلي'); $('total').focus(); return; }
+  let paid = $('paid').value===''? total : +$('paid').value;
+  if(paid>total) paid=total;
+  if(paid<0) paid=0;
+  const now=new Date();
+  db.orders.push({
+    id:uid(), date:workDate(), time:pad(now.getHours())+':'+pad(now.getMinutes()),
+    serviceId:s.id, name:s.name, unit:s.unit, qty, price:+$('price').value||0,
+    total, paid, cost:qty*(+s.cost||0), customer:$('cust').value.trim(), note:$('note').value.trim()
+  });
+  save();
+  $('qty').value=1; $('cust').value=''; $('note').value=''; totalManual=false; paidManual=false;
+  syncSvc(true); renderOrders(); toast('تمت إضافة العملية ✔'); $('qty').focus();
+}
+function delOrder(id){ if(!confirm('حذف هذه العملية؟')) return; db.orders=db.orders.filter(o=>o.id!==id); save(); renderOrders(); }
+function settle(id){
+  const o=db.orders.find(x=>x.id===id); if(!o) return;
+  if(!confirm('تسديد المتبقي ('+money(o.total-o.paid)+') للزبون؟')) return;
+  o.paid=o.total; save(); renderOrders();
+}
+function renderOrders(){
+  const d=workDate(), st=stats(d,d);
+  $('dayLabel').textContent='— '+dayName(d);
+  $('dayKpis').innerHTML = kpi('عدد العمليات',st.os.length,'', true)+kpi('إجمالي المبيعات',st.sales,'p')+kpi('المستلم نقداً',st.paid,'g')+kpi('ديون متبقية',st.debt,st.debt>0?'r':'')+kpi('مصروفات اليوم',st.exp,'o');
+  if(!st.os.length){ $('ordersList').innerHTML='<div class="empty">لا توجد عمليات مسجلة في هذا اليوم</div>'; return; }
+  const rows = st.os.slice().reverse().map(o=>`<tr>
+    <td>${o.time}</td>
+    <td>${esc(o.name)}${o.customer?'<br><span class="sub">👤 '+esc(o.customer)+'</span>':''}${o.note?'<br><span class="sub">'+esc(o.note)+'</span>':''}</td>
+    <td>${fmt(o.qty)} ${esc(o.unit)}</td>
+    <td>${fmt(o.total)}</td>
+    <td>${fmt(o.paid)}</td>
+    <td>${o.total>o.paid?'<span class="tag d">'+fmt(o.total-o.paid)+'</span> <button class="btn sm warn" onclick="settle(\''+o.id+'\')">تسديد</button>':'<span class="tag ok">مسدد</span>'}</td>
+    <td><button class="btn sm red" onclick="delOrder('${o.id}')">حذف</button></td></tr>`).join('');
+  $('ordersList').innerHTML = `<table class="t"><thead><tr><th>الوقت</th><th>الخدمة</th><th>الكمية</th><th>الإجمالي</th><th>المستلم</th><th>المتبقي</th><th></th></tr></thead><tbody>${rows}</tbody>
+    <tfoot><tr><td colspan="3">المجموع</td><td>${fmt(st.sales)}</td><td>${fmt(st.paid)}</td><td colspan="2">${fmt(st.debt)}</td></tr></tfoot></table>`;
+}
+function kpi(label,val,cls,plain){ return `<div class="kpi ${cls||''}"><span>${label}</span><b>${plain?fmt(val):money(val)}</b></div>`; }
+
+/* ====================== المصروفات ====================== */
+function addExpense(){
+  const desc=$('eDesc').value.trim(), amt=+$('eAmt').value;
+  if(!desc){ toast('اكتب بيان المصروف'); return; }
+  if(!(amt>0)){ toast('أدخل المبلغ'); return; }
+  const now=new Date();
+  db.expenses.push({id:uid(),date:workDate(),time:pad(now.getHours())+':'+pad(now.getMinutes()),desc,cat:$('eCat').value,amount:amt});
+  save(); $('eDesc').value=''; $('eAmt').value=''; renderExpenses(); renderOrders(); toast('تم تسجيل المصروف ✔');
+}
+function delExpense(id){ if(!confirm('حذف هذا المصروف؟')) return; db.expenses=db.expenses.filter(e=>e.id!==id); save(); renderExpenses(); renderOrders(); }
+function renderExpenses(){
+  const d=workDate(), st=stats(d,d);
+  $('eDayLabel').textContent='— '+dayName(d);
+  if(!st.es.length){ $('expList').innerHTML='<div class="empty">لا توجد مصروفات في هذا اليوم</div>'; return; }
+  $('expList').innerHTML = `<table class="t"><thead><tr><th>الوقت</th><th>البيان</th><th>التصنيف</th><th>المبلغ</th><th></th></tr></thead><tbody>`+
+    st.es.map(e=>`<tr><td>${e.time||''}</td><td>${esc(e.desc)}</td><td>${esc(e.cat)}</td><td>${fmt(e.amount)}</td><td><button class="btn sm red" onclick="delExpense('${e.id}')">حذف</button></td></tr>`).join('')+
+    `</tbody><tfoot><tr><td colspan="3">المجموع</td><td colspan="2">${money(st.exp)}</td></tr></tfoot></table>`;
+}
+
+/* ====================== التقارير ====================== */
+function currentRange(){
+  const p=$('period').value;
+  return {p, r: rangeFor(p, $('refDate').value||workDate(), $('fromDate').value, $('toDate').value)};
+}
+function rangeText(r){ return r[0]===r[1] ? dayName(r[0]) : 'من '+r[0]+' إلى '+r[1]; }
+const PTITLE = {day:'التقرير اليومي',week:'التقرير الأسبوعي',month:'التقرير الشهري',custom:'تقرير الفترة'};
+
+function reportHTML(st,title,rt,extra){
+  const maxS = Math.max(1,...st.by.map(b=>b.sales));
+  const byRows = st.by.map(b=>`<tr><td>${esc(b.name)}</td><td>${b.ops}</td><td>${fmt(b.qty)} ${esc(b.unit)}</td><td>${fmt(b.sales)}</td><td>${fmt(b.cost)}</td><td><b>${fmt(b.sales-b.cost)}</b></td><td><div class="bar"><i style="width:${Math.round(b.sales/maxS*100)}%"></i></div></td></tr>`).join('');
+  const expRows = st.es.map(e=>`<tr><td>${e.date}</td><td>${esc(e.desc)}</td><td>${esc(e.cat)}</td><td>${fmt(e.amount)}</td></tr>`).join('');
+  const debtRows = st.os.filter(o=>o.total>o.paid).map(o=>`<tr><td>${o.date}</td><td>${esc(o.customer||'—')}</td><td>${esc(o.name)}</td><td>${fmt(o.total-o.paid)}</td></tr>`).join('');
+  return `<div class="rhead"><h1>مكتب الجوهرة للطباعة والاستنساخ</h1><div class="sub">المالك: الأستاذ ولاء سلمان</div><h2>${title}</h2><div class="sub">${rt}</div></div>
+  <div class="kpis">
+    ${kpi('إجمالي المبيعات',st.sales,'p')}
+    ${kpi('الوارد النقدي (المستلم)',st.paid,'g')}
+    ${kpi('ديون غير مسددة',st.debt,st.debt>0?'r':'')}
+    ${kpi('تكلفة الخدمات',st.cost,'o')}
+    ${kpi('المصروفات',st.exp,'o')}
+    ${kpi('صافي الربح',st.net,st.net>=0?'g':'r')}
+  </div>
+  <p class="sub">صافي الربح = المبيعات − تكلفة الخدمات − المصروفات &nbsp;|&nbsp; النقد المتبقي (المستلم − المصروفات): <b>${money(st.cash)}</b> &nbsp;|&nbsp; عدد العمليات: <b>${st.os.length}</b></p>
+  ${extra||''}
+  <h3>ملخص حسب نوع الخدمة</h3>
+  ${st.by.length?`<div class="scroll"><table class="t"><thead><tr><th>الخدمة</th><th>العمليات</th><th>الكمية</th><th>المبيعات</th><th>التكلفة</th><th>الربح</th><th></th></tr></thead><tbody>${byRows}</tbody>
+  <tfoot><tr><td>المجموع</td><td>${st.os.length}</td><td></td><td>${fmt(st.sales)}</td><td>${fmt(st.cost)}</td><td>${fmt(st.gross)}</td><td></td></tr></tfoot></table></div>`:'<div class="empty">لا توجد عمليات</div>'}
+  <h3>المصروفات</h3>
+  ${st.es.length?`<div class="scroll"><table class="t"><thead><tr><th>التاريخ</th><th>البيان</th><th>التصنيف</th><th>المبلغ</th></tr></thead><tbody>${expRows}</tbody><tfoot><tr><td colspan="3">المجموع</td><td>${fmt(st.exp)}</td></tr></tfoot></table></div>`:'<div class="empty">لا توجد مصروفات</div>'}
+  ${debtRows?`<h3>الديون غير المسددة</h3><div class="scroll"><table class="t"><thead><tr><th>التاريخ</th><th>الزبون</th><th>الخدمة</th><th>المتبقي</th></tr></thead><tbody>${debtRows}</tbody></table></div>`:''}`;
+}
+function renderReports(){
+  if(!$('refDate').value) $('refDate').value = workDate();
+  const {p,r} = currentRange();
+  $('customBox').style.display = p==='custom'?'flex':'none';
+  $('refBox').style.display = p==='custom'?'none':'block';
+  if(p==='custom'){ if(!$('fromDate').value) $('fromDate').value=r[0]; if(!$('toDate').value) $('toDate').value=r[1]; }
+  $('reportBody').innerHTML = reportHTML(stats(r[0],r[1]), PTITLE[p], rangeText(r));
+  const cl = db.closings.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,15);
+  $('closingsList').innerHTML = cl.length ? `<table class="t"><thead><tr><th>التاريخ</th><th>المبيعات</th><th>المستلم</th><th>المصروفات</th><th>صافي الربح</th><th>المتوقع</th><th>الفعلي</th><th>الفرق</th></tr></thead><tbody>`+
+    cl.map(c=>`<tr><td>${c.date}</td><td>${fmt(c.sales)}</td><td>${fmt(c.paid)}</td><td>${fmt(c.exp)}</td><td>${fmt(c.net)}</td><td>${fmt(c.expected)}</td><td>${fmt(c.counted)}</td><td><span class="tag ${Math.abs(c.diff)<1?'ok':'d'}">${c.diff>0?'+':''}${fmt(c.diff)}</span></td></tr>`).join('')+`</tbody></table>` : '<div class="empty">لا توجد إغلاقات محفوظة بعد</div>';
+}
+function printReport(){ $('printArea').innerHTML = $('reportBody').innerHTML; window.print(); }
+
+function exportCSV(){
+  const {r} = currentRange(), st = stats(r[0],r[1]);
+  const q = v => '"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const lines = [['العمليات'],['التاريخ','الوقت','الخدمة','الكمية','الوحدة','الإجمالي','المستلم','المتبقي','التكلفة','الزبون','ملاحظة']];
+  st.os.forEach(o=>lines.push([o.date,o.time,o.name,o.qty,o.unit,o.total,o.paid,o.total-o.paid,o.cost,o.customer,o.note]));
+  lines.push([],['المصروفات'],['التاريخ','البيان','التصنيف','المبلغ']);
+  st.es.forEach(e=>lines.push([e.date,e.desc,e.cat,e.amount]));
+  lines.push([],['الملخص'],['إجمالي المبيعات',st.sales],['المستلم',st.paid],['الديون',st.debt],['التكلفة',st.cost],['المصروفات',st.exp],['صافي الربح',st.net]);
+  download('تقرير_'+r[0]+'_'+r[1]+'.csv', '\ufeff'+lines.map(l=>l.map(q).join(',')).join('\r\n'), 'text/csv;charset=utf-8');
+}
+function download(name,text,type){
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ====================== إغلاق الصندوق ====================== */
+let closeSt=null, closeDate='';
+function openClose(){
+  closeDate = workDate(); closeSt = stats(closeDate,closeDate);
+  const prev = db.closings.find(c=>c.date===closeDate);
+  $('cOpen').value = prev? prev.opening : 0;
+  $('cCount').value = prev? prev.counted : '';
+  $('closeBody').innerHTML = reportHTML(closeSt,'تقرير إغلاق الصندوق',dayName(closeDate));
+  $('closeModal').classList.add('on'); calcClose();
+}
+function closeModal(){ $('closeModal').classList.remove('on'); }
+function calcClose(){
+  const open=+$('cOpen').value||0;
+  const expected = open + closeSt.cash;
+  $('cExp').value = fmt(expected);
+  if($('cCount').value===''){ $('cDiff').innerHTML=''; return; }
+  const diff = (+$('cCount').value) - expected;
+  $('cDiff').innerHTML = Math.abs(diff)<1 ? '<div class="diff ok">✔ الصندوق مطابق تماماً</div>' :
+    `<div class="diff bad">${diff>0?'زيادة':'عجز'} في الصندوق بمقدار ${money(Math.abs(diff))}</div>`;
+}
+function closeSummaryHTML(){
+  const open=+$('cOpen').value||0, expected=open+closeSt.cash, counted=$('cCount').value===''?null:+$('cCount').value;
+  return `<h3>جرد الصندوق</h3><table class="t"><tbody>
+    <tr><td>رصيد بداية اليوم</td><td>${money(open)}</td></tr>
+    <tr><td>+ المستلم نقداً</td><td>${money(closeSt.paid)}</td></tr>
+    <tr><td>− المصروفات</td><td>${money(closeSt.exp)}</td></tr>
+    <tr><td><b>المتوقع بالصندوق</b></td><td><b>${money(expected)}</b></td></tr>
+    ${counted==null?'':`<tr><td>النقد الفعلي</td><td>${money(counted)}</td></tr><tr><td><b>الفرق</b></td><td><b>${money(counted-expected)}</b></td></tr>`}
+  </tbody></table>`;
+}
+function printClose(){ $('printArea').innerHTML = reportHTML(closeSt,'تقرير إغلاق الصندوق',dayName(closeDate), closeSummaryHTML()); window.print(); }
+function confirmClose(){
+  if($('cCount').value===''){ toast('أدخل النقد الفعلي الموجود بالصندوق'); $('cCount').focus(); return; }
+  const open=+$('cOpen').value||0, expected=open+closeSt.cash, counted=+$('cCount').value;
+  db.closings = db.closings.filter(c=>c.date!==closeDate);
+  db.closings.push({date:closeDate,opening:open,expected,counted,diff:counted-expected,sales:closeSt.sales,paid:closeSt.paid,exp:closeSt.exp,net:closeSt.net});
+  save(); toast('تم حفظ إغلاق الصندوق ✔'); renderReports();
+}
+
+/* ====================== الإعدادات ====================== */
+function renderSettings(){
+  $('svcTable').innerHTML = db.services.map(s=>`<tr>
+    <td><input value="${esc(s.name)}" onchange="updSvc('${s.id}','name',this.value)"></td>
+    <td><input value="${esc(s.unit)}" style="min-width:80px" onchange="updSvc('${s.id}','unit',this.value)"></td>
+    <td><input type="number" min="0" value="${s.price}" style="min-width:90px" onchange="updSvc('${s.id}','price',this.value)"></td>
+    <td><input type="number" min="0" value="${s.cost}" style="min-width:90px" onchange="updSvc('${s.id}','cost',this.value)"></td>
+    <td><button class="btn sm red" onclick="delSvc('${s.id}')">حذف</button></td></tr>`).join('');
+}
+function updSvc(id,k,v){
+  const s=svcById(id); if(!s) return;
+  s[k] = (k==='price'||k==='cost') ? (+v||0) : v.trim();
+  save(); renderServices();
+}
+function delSvc(id){
+  if(db.services.length<=1){ toast('يجب بقاء خدمة واحدة على الأقل'); return; }
+  if(!confirm('حذف الخدمة؟ (العمليات القديمة تبقى محفوظة)')) return;
+  db.services=db.services.filter(s=>s.id!==id); save(); renderServices(); renderSettings();
+}
+function addService(){
+  const name=$('nName').value.trim(), unit=$('nUnit').value.trim()||'عملية';
+  if(!name){ toast('اكتب اسم الخدمة'); return; }
+  db.services.push({id:uid(),name,unit,price:+$('nPrice').value||0,cost:+$('nCost').value||0});
+  save(); ['nName','nUnit','nPrice'].forEach(i=>$(i).value=''); $('nCost').value=0;
+  renderServices(); renderSettings(); toast('تمت إضافة الخدمة ✔');
+}
+function backup(){ download('jawhara-backup-'+today()+'.json', JSON.stringify(db), 'application/json'); }
+function restore(inp){
+  const f=inp.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const d=JSON.parse(rd.result);
+      if(!d.services||!d.orders||!d.expenses) throw 0;
+      if(!confirm('سيتم استبدال كل البيانات الحالية بالنسخة الاحتياطية. متابعة؟')) return;
+      d.closings=d.closings||[]; db=d; save(); refreshAll(); toast('تم الاسترجاع ✔');
+    }catch(e){ toast('ملف غير صالح'); }
+    inp.value='';
+  };
+  rd.readAsText(f);
+}
+function wipe(){
+  if(!confirm('سيتم حذف جميع العمليات والمصروفات نهائياً! هل أنت متأكد؟')) return;
+  if(!confirm('تأكيد أخير: هل أخذت نسخة احتياطية؟')) return;
+  db={services:JSON.parse(JSON.stringify(DEFAULT_SERVICES)),orders:[],expenses:[],closings:[]};
+  save(); refreshAll(); toast('تم حذف البيانات');
+}
+
+/* ====================== تشغيل ====================== */
+function tick(){
+  const n=new Date();
+  $('clock').innerHTML = DAYS[n.getDay()]+' '+dstr(n)+'<br>'+pad(n.getHours())+':'+pad(n.getMinutes());
+}
+$('workDate').value = today();
+tick(); setInterval(tick,30000);
+renderServices(); renderOrders(); renderExpenses(); renderSettings();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && ['qty','price','total','paid','cust','note'].includes(document.activeElement.id)) addOrder();
+  if(e.key==='Escape') closeModal();
+});
+</script>
+</body>
+</html>

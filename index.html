@@ -326,6 +326,7 @@ const pad = n => String(n).padStart(2,'0');
 const dstr = d => d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const today = () => dstr(new Date());
 const nowT = () => { const n = new Date(); return pad(n.getHours())+':'+pad(n.getMinutes()); };
+const fmtT = t => { if(!t) return ''; const a = String(t).split(':').map(Number); const h = a[0], m = a[1]||0; return ((h%12)||12)+':'+pad(m)+' '+(h<12?'ص':'م'); };
 const parseD = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
 const fmt = n => Math.round(n||0).toLocaleString('en-US');
 const money = n => fmt(n)+' د.ع';
@@ -439,7 +440,7 @@ async function reGrant(){
 function statClick(){ if(fileHandle && !fileOk) reGrant(); else showTab('settings'); }
 function setStatus(){
   const el = $('saveStat'); if(!el) return;
-  const t = lastSave ? pad(lastSave.getHours())+':'+pad(lastSave.getMinutes()) : '';
+  const t = lastSave ? fmtT(pad(lastSave.getHours())+':'+pad(lastSave.getMinutes())) : '';
   let h = localOk ? '💾 محفوظ تلقائياً'+(t?' · '+t:'') : '⚠️ تعذّر الحفظ بالمتصفح';
   if(fileHandle) h += fileOk ? ' · 📁 الملف ✔' : ' · <u>📁 اضغط لتفعيل الملف</u>';
   el.innerHTML = h;
@@ -640,7 +641,7 @@ function renderOrders(){
   const shown = list.slice(0,300);
   const rows = shown.map(o=>{
     const cn = custName(o), r = remOf(o);
-    return '<tr><td>'+(scope==='all'?o.date+'<br>':'')+o.time+'<br><span class="sub">#'+o.no+'</span></td>'+
+    return '<tr><td>'+(scope==='all'?o.date+'<br>':'')+fmtT(o.time)+'<br><span class="sub">#'+o.no+'</span></td>'+
       '<td>'+esc(o.name)+(cn?'<br><button class="link" onclick="openCustomer(\''+groupKey(o)+'\')">👤 '+esc(cn)+'</button>':'')+(o.note?'<br><span class="sub">'+esc(o.note)+'</span>':'')+'</td>'+
       '<td>'+fmt(o.qty)+' '+esc(o.unit)+'</td><td>'+fmt(o.total)+'</td><td>'+fmt(paidOf(o))+'</td>'+
       '<td>'+(r>0?'<span class="tag d">'+fmt(r)+'</span>':'<span class="tag ok">مسدد</span>')+'</td>'+
@@ -671,9 +672,9 @@ function openOrder(id, back){
   if(back !== undefined) orderBack = back;
   const o = db.orders.find(x=>x.id===id); if(!o){ gmHide(); return; }
   const paid = paidOf(o), rem = remOf(o), cn = custName(o);
-  const pr = (o.payments||[]).map(p=>'<tr><td>'+p.date+' '+(p.time||'')+'</td><td>'+esc(p.note||'')+'</td><td>'+fmt(p.amount)+'</td><td><button class="btn sm red" onclick="delPayment(\''+o.id+'\',\''+p.id+'\')">حذف</button></td></tr>').join('');
+  const pr = (o.payments||[]).map(p=>'<tr><td>'+p.date+' '+fmtT(p.time)+'</td><td>'+esc(p.note||'')+'</td><td>'+fmt(p.amount)+'</td><td><button class="btn sm red" onclick="delPayment(\''+o.id+'\',\''+p.id+'\')">حذف</button></td></tr>').join('');
   gmShow('<h2>🧾 طلب #'+o.no+' <span class="tag '+(rem>0?'d':'ok')+'">'+(rem>0?'عليه دين':'مسدد')+'</span></h2>'+
-    '<p class="sub">'+dayName(o.date)+' · '+o.time+' · '+(o.payType==='debt'?'📒 دين':'💵 نقدي')+'</p>'+
+    '<p class="sub">'+dayName(o.date)+' · '+fmtT(o.time)+' · '+(o.payType==='debt'?'📒 دين':'💵 نقدي')+'</p>'+
     '<table class="t"><tbody>'+
     '<tr><td>الخدمة</td><td><b>'+esc(o.name)+'</b> — '+fmt(o.qty)+' '+esc(o.unit)+' × '+fmt(o.price)+'</td></tr>'+
     '<tr><td>الزبون</td><td>'+(cn?'<button class="link" onclick="openCustomer(\''+groupKey(o)+'\')">'+esc(cn)+'</button>'+(custPhone(o)?' · '+esc(custPhone(o)):''):'—')+'</td></tr>'+
@@ -865,7 +866,7 @@ function printReceipt(id){
   const paid = paidOf(o), rem = remOf(o), cn = custName(o);
   const pr = (o.payments||[]).map(p=>'<div class="ln"><span>'+p.date+' — '+esc(p.note||'دفعة')+'</span><span>'+fmt(p.amount)+'</span></div>').join('');
   printHTML('<div class="receipt"><h3>مكتب الجوهرة للطباعة والاستنساخ</h3><div class="c sub">الأستاذ ولاء سلمان</div><div class="c big" style="margin:6px 0">وصل رقم #'+o.no+'</div>'+
-    '<div class="ln"><span>التاريخ</span><span>'+o.date+' '+o.time+'</span></div>'+
+    '<div class="ln"><span>التاريخ</span><span>'+o.date+' '+fmtT(o.time)+'</span></div>'+
     (cn?'<div class="ln"><span>الزبون</span><span>'+esc(cn)+'</span></div>':'')+
     '<div class="ln"><span>'+esc(o.name)+'</span><span>'+fmt(o.qty)+' '+esc(o.unit)+' × '+fmt(o.price)+'</span></div>'+
     (o.note?'<div class="ln"><span>ملاحظة</span><span>'+esc(o.note)+'</span></div>':'')+
@@ -899,7 +900,7 @@ function renderExpenses(){
   $('eDayLabel').textContent = '— '+dayName(d);
   if(!st.es.length){ $('expList').innerHTML = '<div class="empty">لا توجد مصروفات في هذا اليوم</div>'; return; }
   $('expList').innerHTML = '<table class="t"><thead><tr><th>الوقت</th><th>البيان</th><th>التصنيف</th><th>المبلغ</th><th></th></tr></thead><tbody>'+
-    st.es.map(e=>'<tr><td>'+(e.time||'')+'</td><td>'+esc(e.desc)+'</td><td>'+esc(e.cat)+'</td><td>'+fmt(e.amount)+'</td><td><button class="btn sm red" onclick="delExpense(\''+e.id+'\')">حذف</button></td></tr>').join('')+
+    st.es.map(e=>'<tr><td>'+fmtT(e.time)+'</td><td>'+esc(e.desc)+'</td><td>'+esc(e.cat)+'</td><td>'+fmt(e.amount)+'</td><td><button class="btn sm red" onclick="delExpense(\''+e.id+'\')">حذف</button></td></tr>').join('')+
     '</tbody><tfoot><tr><td colspan="3">المجموع</td><td colspan="2">'+money(st.exp)+'</td></tr></tfoot></table>';
 }
 
@@ -976,7 +977,7 @@ function exportCSV(){
   const cr = currentRange(), r = cr.r, st = stats(r[0],r[1]);
   const q = v => '"'+String(v==null?'':v).replace(/"/g,'""')+'"';
   const lines = [['العمليات'],['رقم','التاريخ','الوقت','الخدمة','الكمية','الوحدة','الإجمالي','المدفوع حتى الآن','المتبقي','نوع الدفع','الزبون','الهاتف','التكلفة','ملاحظة']];
-  st.os.forEach(o=>lines.push([o.no,o.date,o.time,o.name,o.qty,o.unit,o.total,paidOf(o),remOf(o),o.payType==='debt'?'دين':'نقدي',custName(o),custPhone(o),o.cost,o.note]));
+  st.os.forEach(o=>lines.push([o.no,o.date,fmtT(o.time),o.name,o.qty,o.unit,o.total,paidOf(o),remOf(o),o.payType==='debt'?'دين':'نقدي',custName(o),custPhone(o),o.cost,o.note]));
   lines.push([],['الدفعات المستلمة في الفترة'],['تاريخ الدفعة','الزبون','رقم الطلب','المبلغ','ملاحظة']);
   st.pays.forEach(x=>lines.push([x.p.date,custName(x.o),x.o.no,x.p.amount,x.p.note]));
   lines.push([],['المصروفات'],['التاريخ','البيان','التصنيف','المبلغ']);
@@ -1079,7 +1080,7 @@ function wipe(){
 /* ====================== تشغيل ====================== */
 function tick(){
   const n = new Date();
-  $('clock').innerHTML = DAYS[n.getDay()]+' '+dstr(n)+'<br>'+pad(n.getHours())+':'+pad(n.getMinutes());
+  $('clock').innerHTML = DAYS[n.getDay()]+' '+dstr(n)+'<br>'+fmtT(nowT());
 }
 $('workDate').value = today();
 tick(); setInterval(tick,30000);

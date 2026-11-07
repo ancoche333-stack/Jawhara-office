@@ -72,6 +72,7 @@ table.t tfoot td{font-weight:700;background:#f8fafc}
 .diff{padding:10px 14px;border-radius:10px;font-weight:700;margin-top:10px}
 .diff.ok{background:#dcfce7;color:#166534}.diff.bad{background:#fee2e2;color:#991b1b}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.saveStat{font-size:13px;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:999px;cursor:pointer;white-space:nowrap}
 #printArea{display:none}
 @media print{
   body>*:not(#printArea){display:none!important}
@@ -90,6 +91,7 @@ table.t tfoot td{font-weight:700;background:#f8fafc}
   </div>
   <div class="hright">
     <div><label style="color:#fff;margin:0 0 3px">تاريخ العمل</label><input type="date" id="workDate" onchange="refreshAll()"></div>
+    <div class="saveStat" id="saveStat" onclick="statClick()"></div>
     <div class="clock" id="clock"></div>
   </div>
 </header>
@@ -163,6 +165,11 @@ table.t tfoot td{font-weight:700;background:#f8fafc}
     <h2>سجل إغلاقات الصندوق</h2>
     <div class="scroll" id="closingsList"></div>
   </div>
+  <div class="card">
+    <h2>📅 سجل الأيام المحفوظة</h2>
+    <p class="sub">كل الأيام اللي سجلتها محفوظة تلقائياً. اضغط "فتح" لمراجعة أي يوم أو التعديل عليه.</p>
+    <div class="scroll" id="daysList"></div>
+  </div>
 </section>
 
 <!-- ============ المصروفات ============ -->
@@ -200,6 +207,11 @@ table.t tfoot td{font-weight:700;background:#f8fafc}
       <div><label>تكلفة الوحدة</label><input type="number" id="nCost" min="0" value="0"></div>
     </div>
     <button class="btn" style="margin-top:12px" onclick="addService()">إضافة الخدمة</button>
+  </div>
+  <div class="card">
+    <h2>💾 الحفظ التلقائي</h2>
+    <p class="sub">كل عملية تسجلها تنحفظ تلقائياً داخل المتصفح، وبنسخة ثانية احتياطية داخله أيضاً. للأمان الأكبر اربط ملف على الحاسبة (يعمل على Chrome و Edge): الملف ينحدّث تلقائياً بعد كل عملية، وتقدر تنسخه على فلاش أو Google Drive.</p>
+    <div class="actions"><button class="btn" onclick="linkFile()">📁 ربط ملف للحفظ التلقائي</button></div>
   </div>
   <div class="card">
     <h2>النسخ الاحتياطي</h2>
@@ -248,12 +260,99 @@ const DEFAULT_SERVICES = [
   {id:'s7',name:'كتابة بحوث',unit:'بحث',price:15000,cost:0},
   {id:'s8',name:'خدمات أخرى',unit:'عملية',price:1000,cost:0}
 ];
-let db = load();
-function load(){
+function readLocal(){
   try{ const d = JSON.parse(localStorage.getItem(KEY)); if(d && d.services) return d; }catch(e){}
-  return {services: JSON.parse(JSON.stringify(DEFAULT_SERVICES)), orders:[], expenses:[], closings:[]};
+  return null;
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ toast('تعذّر الحفظ في المتصفح!'); } }
+let db = readLocal() || {services: JSON.parse(JSON.stringify(DEFAULT_SERVICES)), orders:[], expenses:[], closings:[], updatedAt:0};
+let lastSave = null, localOk = true, fileHandle = null, fileOk = false, fileTimer = null;
+
+function save(){
+  db.updatedAt = Date.now();
+  localOk = true;
+  try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){ localOk = false; }
+  idbSet('db', db);
+  clearTimeout(fileTimer); fileTimer = setTimeout(writeFileNow, 500);
+  lastSave = new Date();
+  setStatus();
+}
+
+/* نسخة ثانية داخل IndexedDB */
+function idb(){ return new Promise((res,rej)=>{ const r = indexedDB.open('jawhara',1); r.onupgradeneeded = ()=>r.result.createObjectStore('kv'); r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error); }); }
+async function idbSet(k,v){ try{ const d = await idb(); d.transaction('kv','readwrite').objectStore('kv').put(v,k); }catch(e){} }
+async function idbGet(k){ try{ const d = await idb(); return await new Promise((res,rej)=>{ const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = ()=>res(q.result); q.onerror = ()=>rej(q.error); }); }catch(e){ return null; } }
+
+/* حفظ تلقائي في ملف على الحاسبة */
+async function writeFileNow(){
+  if(!fileHandle) return;
+  try{
+    if((await fileHandle.queryPermission({mode:'readwrite'})) !== 'granted'){ fileOk = false; setStatus(); return; }
+    const w = await fileHandle.createWritable();
+    await w.write(JSON.stringify(db)); await w.close();
+    fileOk = true;
+  }catch(e){ fileOk = false; }
+  setStatus();
+}
+async function linkFile(){
+  if(!window.showSaveFilePicker){ toast('الربط بملف يعمل على Chrome أو Edge فقط'); return; }
+  try{
+    const h = await showSaveFilePicker({suggestedName:'jawhara-data.json', types:[{description:'ملف بيانات', accept:{'application/json':['.json']}}]});
+    const txt = await (await h.getFile()).text();
+    if(txt.trim()){
+      try{
+        const d = JSON.parse(txt);
+        if(d.services && d.orders && (d.updatedAt||0) > (db.updatedAt||0) && confirm('الملف المختار يحتوي بيانات أحدث من الموجودة بالمتصفح. استرجاعها؟')){
+          d.closings = d.closings || []; db = d;
+          try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){}
+          idbSet('db', db); refreshAll();
+        }
+      }catch(e){}
+    }
+    fileHandle = h; await idbSet('fh', h);
+    await writeFileNow();
+    toast(fileOk ? 'تم ربط الملف، الحفظ التلقائي شغّال ✔' : 'تعذّر الكتابة في الملف');
+  }catch(e){ if(e && e.name !== 'AbortError') toast('تعذّر ربط الملف'); }
+}
+async function reGrant(){
+  if(!fileHandle) return;
+  try{ if((await fileHandle.requestPermission({mode:'readwrite'})) === 'granted'){ await writeFileNow(); toast('تم تفعيل الحفظ في الملف ✔'); } }catch(e){}
+}
+function statClick(){ if(fileHandle && !fileOk) reGrant(); else showTab('settings'); }
+function setStatus(){
+  const el = document.getElementById('saveStat'); if(!el) return;
+  const t = lastSave ? String(lastSave.getHours()).padStart(2,'0')+':'+String(lastSave.getMinutes()).padStart(2,'0') : '';
+  let h = localOk ? '💾 محفوظ تلقائياً'+(t?' · '+t:'') : '⚠️ تعذّر الحفظ بالمتصفح';
+  if(fileHandle) h += fileOk ? ' · 📁 الملف ✔' : ' · <u>📁 اضغط لتفعيل الملف</u>';
+  el.innerHTML = h;
+}
+async function initStorage(){
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+  const m = await idbGet('db');
+  if(m && m.services && (m.updatedAt||0) > (db.updatedAt||0)){
+    db = m; db.closings = db.closings || [];
+    try{ localStorage.setItem(KEY, JSON.stringify(db)); }catch(e){}
+    refreshAll(); toast('تم استرجاع بياناتك المحفوظة ✔');
+  }else{ idbSet('db', db); }
+  try{
+    const h = await idbGet('fh');
+    if(h){ fileHandle = h; fileOk = (await h.queryPermission({mode:'readwrite'})) === 'granted'; if(fileOk) await writeFileNow(); }
+  }catch(e){}
+  if(db.updatedAt) lastSave = new Date(db.updatedAt);
+  setStatus();
+}
+
+/* سجل الأيام */
+function renderDays(){
+  const set = {}; db.orders.forEach(o=>set[o.date]=1); db.expenses.forEach(e=>set[e.date]=1);
+  const days = Object.keys(set).sort().reverse();
+  if(!days.length){ document.getElementById('daysList').innerHTML = '<div class="empty">لا توجد أيام مسجلة بعد</div>'; return; }
+  document.getElementById('daysList').innerHTML = '<table class="t"><thead><tr><th>اليوم</th><th>العمليات</th><th>المبيعات</th><th>المستلم</th><th>المصروفات</th><th>صافي الربح</th><th>الإغلاق</th><th></th></tr></thead><tbody>' +
+    days.map(d=>{
+      const x = stats(d,d), c = db.closings.some(k=>k.date===d);
+      return '<tr><td>'+dayName(d)+'</td><td>'+x.os.length+'</td><td>'+fmt(x.sales)+'</td><td>'+fmt(x.paid)+'</td><td>'+fmt(x.exp)+'</td><td>'+fmt(x.net)+'</td><td>'+(c?'<span class="tag ok">مغلق</span>':'—')+'</td><td><button class="btn sm alt" onclick="openDay(\''+d+'\')">فتح</button></td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function openDay(d){ document.getElementById('workDate').value = d; refreshAll(); showTab('orders'); }
 
 /* ====================== أدوات ====================== */
 const $ = id => document.getElementById(id);
@@ -432,6 +531,7 @@ function reportHTML(st,title,rt,extra){
   ${debtRows?`<h3>الديون غير المسددة</h3><div class="scroll"><table class="t"><thead><tr><th>التاريخ</th><th>الزبون</th><th>الخدمة</th><th>المتبقي</th></tr></thead><tbody>${debtRows}</tbody></table></div>`:''}`;
 }
 function renderReports(){
+  renderDays();
   if(!$('refDate').value) $('refDate').value = workDate();
   const {p,r} = currentRange();
   $('customBox').style.display = p==='custom'?'flex':'none';
@@ -494,7 +594,8 @@ function confirmClose(){
   const open=+$('cOpen').value||0, expected=open+closeSt.cash, counted=+$('cCount').value;
   db.closings = db.closings.filter(c=>c.date!==closeDate);
   db.closings.push({date:closeDate,opening:open,expected,counted,diff:counted-expected,sales:closeSt.sales,paid:closeSt.paid,exp:closeSt.exp,net:closeSt.net});
-  save(); toast('تم حفظ إغلاق الصندوق ✔'); renderReports();
+  save(); renderReports();
+  if(fileHandle && fileOk){ toast('تم حفظ إغلاق الصندوق ✔'); } else { backup(); toast('تم الإغلاق ✔ ونُزّلت نسخة احتياطية تلقائياً'); }
 }
 
 /* ====================== الإعدادات ====================== */
@@ -552,6 +653,7 @@ function tick(){
 }
 $('workDate').value = today();
 tick(); setInterval(tick,30000);
+initStorage();
 renderServices(); renderOrders(); renderExpenses(); renderSettings();
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter' && ['qty','price','total','paid','cust','note'].includes(document.activeElement.id)) addOrder();
